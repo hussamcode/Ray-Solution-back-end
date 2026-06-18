@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class MyProducerService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    @Transactional
     public MyProducerDTO.ProducerResponse createProducer(MyProducerDTO.CreateProducerRequest request) {
         User currentUser = getCurrentUser();
         MyProducer myproducer = MyProducer.builder()
@@ -67,6 +69,7 @@ public class MyProducerService {
         return mapToResponse(myproducer);
     }
 
+    @Transactional
     public MyProducerDTO.ProducerResponse updateProducerStatus(MyProducerDTO.UpdateProducerRequest request, Long id) {
         User currentUser = getCurrentUser();
         MyProducer myproducer = producerRepository.findByIdAndUser(id, currentUser) // ✅
@@ -78,6 +81,7 @@ public class MyProducerService {
         return mapToResponse(myproducer);
     }
 
+    @Transactional
     public void deleteProducer(Long id) {
         User currentUser = getCurrentUser();
         MyProducer producer = producerRepository.findByIdAndUser(id, currentUser)
@@ -103,7 +107,7 @@ public class MyProducerService {
         //                          كل المتصلين يستقبلون التحديث
 
         // 3. إرسال لـ topic خاص بهذا المنتج فقط
-        messagingTemplate.convertAndSend("/topic/producer" + producer.getId(), update);
+        messagingTemplate.convertAndSend("/topic/producer/" + producer.getId(), update);
         //                                      ↑
         //                          مثلاً: /topic/producer1 أو /topic/producer5
     }

@@ -16,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Console;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +66,7 @@ public class OrderService {
         return producer;
     }
 
+    @Transactional
     public OrderDTO.OrderResponse createOrder(OrderDTO.CreateOrderRequest request) {
         User currentUser = getCurrentUser();
         findActiveProduct(request.producerCode);
@@ -81,6 +82,7 @@ public class OrderService {
     }
 
 
+    @Transactional
     public OrderDTO.OrderResponse updateOrder(OrderDTO.UpdateOrderRequest request, String code) {
         User currentUser = getCurrentUser();
         Order order = orderRepository.findBycodeAndUser(code, currentUser)
@@ -98,6 +100,7 @@ public class OrderService {
         return mapToResponse(order);
     }
 
+    @Transactional
     public OrderDTO.OrderResponse updateOrderStatus(OrderDTO.UpdateStateRequest request, String code) {
         Order order;
         User currentUser = getCurrentUser();
@@ -117,6 +120,7 @@ public class OrderService {
         return mapToResponse(order);
     }
 
+    @Transactional
     public OrderDTO.OrderResponse updateOrderStatusAdmin(OrderDTO.UpdateStateRequest request, String code) {
         Order order;
         if (isAdmin() || isManager()) {
@@ -148,6 +152,7 @@ public class OrderService {
     }
 
 
+    @Transactional
     public OrderDTO.OrderResponse updateInformationStatus(OrderDTO.UpdateInformationRequest request, String code) {
         User currentUser = getCurrentUser();
         Order order = orderRepository.findBycodeAndUser(code, currentUser)
@@ -181,6 +186,7 @@ public class OrderService {
     }
 
 
+    @Transactional
     public OrderDTO.OrderResponse updateOrderLocation(OrderDTO.UpdateLocationRequest request, String code) {
         Order order;
         if (isAdmin() || isManager()) {
@@ -260,6 +266,7 @@ public class OrderService {
     }
 
 
+    @Transactional
     public void deleteOrder(String code) {
         Order order;
         if (isAdmin() || isManager()) {
@@ -275,6 +282,7 @@ public class OrderService {
     }
 
 
+    @Transactional
     private void deductStock(Order order) {
         for (String code : order.getProducerCode()) {
             Producer product = producerRepository.findBycode(code)

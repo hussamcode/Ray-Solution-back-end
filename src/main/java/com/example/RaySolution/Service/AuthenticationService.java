@@ -8,10 +8,12 @@ import com.example.RaySolution.Repository.UserRepository;
 import com.example.RaySolution.model.User;
 import jakarta.mail.MessagingException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -36,7 +38,14 @@ public class AuthenticationService {
         this.emailService = emailService;
     }
 
+    @Transactional
     public User signup(RegisterUserDto input) {
+        if (userRepository.findByUsername(input.getUsername()).isPresent()) {
+            throw new RuntimeException("Username already taken");
+        }
+        if (userRepository.findByEmail(input.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already registered");
+        }
         User user = new User(input.getUsername(), input.getEmail(), passwordEncoder.encode(input.getPassword()));
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
@@ -60,16 +69,20 @@ public class AuthenticationService {
                     )
             );
             return user;
-        } catch (Exception e) {
+        } catch (BadCredentialsException e) {
             throw new RuntimeException("Invalid username or password");
         }
     }
 
 
+    @Transactional
     public void verifyUser(VerifyUserDto input) {
         Optional<User> optionalUser = userRepository.findByEmail(input.getEmail());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
+            if (user.getVerificationCodeExpiresAt() == null || user.getVerificationCode() == null) {
+                throw new RuntimeException("No pending verification for this account");
+            }
             if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
                 throw new RuntimeException("Verification code has expired");
             }
@@ -86,6 +99,7 @@ public class AuthenticationService {
         }
     }
 
+    @Transactional
     public void resendVerificationCode(String email) {
         Optional<User> optionalUser = userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {

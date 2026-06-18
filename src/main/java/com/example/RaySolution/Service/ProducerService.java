@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ public class ProducerService {
     private final ProducerRepository producerRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
+    @Transactional
     public ProducerDTO.ProducerResponse createProducer(ProducerDTO.CreateProducerRequest request) {
         Producer producer = Producer.builder()
                 .code(request.code)
@@ -38,6 +40,7 @@ public class ProducerService {
         return mapToResponse(producer);
     }
 
+    @Transactional
     public void createProducerGroup(List<Producer> requestList) {
         requestList.forEach(request -> {
             Producer producer = Producer.builder()
@@ -98,6 +101,7 @@ public class ProducerService {
         return mapToResponse(producer);
     }
 
+    @Transactional
     public ProducerDTO.ProducerResponse updateProducerStatus(ProducerDTO.UpdateProducerRequest request, Long id) {
         Producer producer = producerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("producer not found with id:" + id));
@@ -137,6 +141,7 @@ public class ProducerService {
         return mapToResponse(producer);
     }
 
+    @Transactional
     public ProducerDTO.ProducerResponse updateProducerAdd(ProducerDTO.UpdateProducerRequestAdd request, Long id) {
         Producer producer = producerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("producer not found with id:" + id));
@@ -149,6 +154,7 @@ public class ProducerService {
         return mapToResponse(producer);
     }
 
+    @Transactional
     public void deleteProducer(Long id) {
         Producer producer = producerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("producer not found with id:" + id));
@@ -190,7 +196,7 @@ public class ProducerService {
                 .build();
 
         messagingTemplate.convertAndSend("/topic/producer", update);
-        messagingTemplate.convertAndSend("/topic/producer" + producer.getId(), update);
+        messagingTemplate.convertAndSend("/topic/producer/" + producer.getId(), update);
 
         log.info("Sent shipment status update: {}", update);
     }

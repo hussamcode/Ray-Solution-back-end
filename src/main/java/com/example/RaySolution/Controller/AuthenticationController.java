@@ -15,14 +15,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RequestMapping("/auth")
 @RestController
 public class AuthenticationController {
     private final JwtService jwtService;
     private final ProducerService producerService;
     private final AuthenticationService authenticationService;
-    private String jwtToken = "";
-
     public AuthenticationController(JwtService jwtService, ProducerService producerService, AuthenticationService authenticationService) {
         this.jwtService = jwtService;
         this.producerService = producerService;
@@ -39,13 +39,13 @@ public class AuthenticationController {
     public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto) {
         try {
             User authenticatedUser = authenticationService.authenticate(loginUserDto);
-            jwtToken = jwtService.generateToken(
+            String jwtToken = jwtService.generateToken(
                     authenticatedUser.getUsername(),
                     authenticatedUser.getRole().name()
             );
             return ResponseEntity.ok(new LoginResponse(jwtToken));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -55,7 +55,7 @@ public class AuthenticationController {
             authenticationService.verifyUser(verifyUserDto);
             return ResponseEntity.ok("Account verified successfully");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -63,9 +63,9 @@ public class AuthenticationController {
     public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
         try {
             authenticationService.resendVerificationCode(email);
-            return ResponseEntity.ok("Verification code sent");
+            return ResponseEntity.ok(Map.of("message", "Verification code sent"));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 

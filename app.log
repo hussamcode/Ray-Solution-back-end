@@ -1,0 +1,66 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.5)
+
+2026-06-18T15:55:37.242+03:00  INFO 8896 --- [RaySolution] [           main] c.e.RaySolution.RaySolutionApplication   : Starting RaySolutionApplication using Java 26 with PID 8896 (C:\Users\RayIT\Desktop\asste\project\pr1\RaySolution\target\classes started by RayIT in C:\Users\RayIT\Desktop\asste\project\pr1\RaySolution)
+2026-06-18T15:55:37.243+03:00 DEBUG 8896 --- [RaySolution] [           main] c.e.RaySolution.RaySolutionApplication   : Running with Spring Boot v4.0.5, Spring v7.0.6
+2026-06-18T15:55:37.247+03:00  INFO 8896 --- [RaySolution] [           main] c.e.RaySolution.RaySolutionApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-06-18T15:55:37.555+03:00  INFO 8896 --- [RaySolution] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-06-18T15:55:37.581+03:00  INFO 8896 --- [RaySolution] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 22 ms. Found 4 JPA repository interfaces.
+2026-06-18T15:55:37.783+03:00  INFO 8896 --- [RaySolution] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-06-18T15:55:37.788+03:00  INFO 8896 --- [RaySolution] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-06-18T15:55:37.789+03:00  INFO 8896 --- [RaySolution] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.20]
+2026-06-18T15:55:37.810+03:00  INFO 8896 --- [RaySolution] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 543 ms
+2026-06-18T15:55:37.864+03:00  INFO 8896 --- [RaySolution] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-06-18T15:55:37.893+03:00  INFO 8896 --- [RaySolution] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.7.Final
+2026-06-18T15:55:38.074+03:00  INFO 8896 --- [RaySolution] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-06-18T15:55:38.087+03:00  INFO 8896 --- [RaySolution] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-06-18T15:55:38.231+03:00  INFO 8896 --- [RaySolution] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@49ea13b6
+2026-06-18T15:55:38.232+03:00  INFO 8896 --- [RaySolution] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-06-18T15:55:38.265+03:00  INFO 8896 --- [RaySolution] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/raysolution]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.45
+	Default catalog/schema: raysolution/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-06-18T15:55:38.730+03:00  INFO 8896 --- [RaySolution] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-06-18T15:55:38.771+03:00  INFO 8896 --- [RaySolution] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-06-18T15:55:38.794+03:00  INFO 8896 --- [RaySolution] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-06-18T15:55:38.862+03:00  WARN 8896 --- [RaySolution] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-06-18T15:55:38.916+03:00 DEBUG 8896 --- [RaySolution] [           main] c.e.R.config.JwtAuthenticationFilter     : Filter 'jwtAuthenticationFilter' configured for use
+2026-06-18T15:55:38.962+03:00  INFO 8896 --- [RaySolution] [           main] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2026-06-18T15:55:38.962+03:00  WARN 8896 --- [RaySolution] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2026-06-18T15:55:39.175+03:00 DEBUG 8896 --- [RaySolution] [           main] o.s.m.s.ExecutorSubscribableChannel      : clientOutboundChannel added SubProtocolWebSocketHandler[StompSubProtocolHandler[v10.stomp, v11.stomp, v12.stomp]]
+2026-06-18T15:55:39.176+03:00 DEBUG 8896 --- [RaySolution] [           main] o.s.m.s.ExecutorSubscribableChannel      : clientInboundChannel added WebSocketAnnotationMethodMessageHandler[prefixes=[/app/]]
+2026-06-18T15:55:39.176+03:00  INFO 8896 --- [RaySolution] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
+2026-06-18T15:55:39.176+03:00 DEBUG 8896 --- [RaySolution] [           main] o.s.m.s.ExecutorSubscribableChannel      : clientInboundChannel added SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5a318745]
+2026-06-18T15:55:39.176+03:00 DEBUG 8896 --- [RaySolution] [           main] o.s.m.s.ExecutorSubscribableChannel      : brokerChannel added SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5a318745]
+2026-06-18T15:55:39.176+03:00  INFO 8896 --- [RaySolution] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5a318745]]
+2026-06-18T15:55:39.176+03:00  INFO 8896 --- [RaySolution] [           main] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
+2026-06-18T15:55:39.176+03:00 DEBUG 8896 --- [RaySolution] [           main] o.s.m.s.ExecutorSubscribableChannel      : clientInboundChannel added UserDestinationMessageHandler[DefaultUserDestinationResolver[prefix=/user/]]
+2026-06-18T15:55:39.176+03:00 DEBUG 8896 --- [RaySolution] [           main] o.s.m.s.ExecutorSubscribableChannel      : brokerChannel added UserDestinationMessageHandler[DefaultUserDestinationResolver[prefix=/user/]]
+2026-06-18T15:55:39.183+03:00  INFO 8896 --- [RaySolution] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-06-18T15:55:39.185+03:00  INFO 8896 --- [RaySolution] [           main] c.e.RaySolution.RaySolutionApplication   : Started RaySolutionApplication in 2.111 seconds (process running for 2.275)
+2026-06-18T15:56:04.718+03:00  INFO 8896 --- [RaySolution] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-18T15:56:04.719+03:00  INFO 8896 --- [RaySolution] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-06-18T15:56:04.719+03:00  INFO 8896 --- [RaySolution] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2026-06-18T15:56:39.182+03:00  INFO 8896 --- [RaySolution] [MessageBroker-1] o.s.w.s.c.WebSocketMessageBrokerStats    : WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 1, active threads = 1, queued tasks = 0, completed tasks = 0]
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:4.0.5:run (default-cli) on project RaySolution: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
