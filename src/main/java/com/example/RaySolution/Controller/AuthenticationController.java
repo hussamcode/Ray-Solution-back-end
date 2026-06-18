@@ -3,6 +3,7 @@ package com.example.RaySolution.Controller;
 import com.example.RaySolution.DTO.LoginUserDto;
 import com.example.RaySolution.DTO.ProducerDTO;
 import com.example.RaySolution.DTO.RegisterUserDto;
+import com.example.RaySolution.DTO.UserDTO;
 import com.example.RaySolution.DTO.VerifyUserDto;
 import com.example.RaySolution.Service.AuthenticationService;
 import com.example.RaySolution.Service.JwtService;
@@ -29,23 +30,23 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
+    public ResponseEntity<UserDTO.UserResponse> register(@RequestBody RegisterUserDto registerUserDto) {
         User registeredUser = authenticationService.signup(registerUserDto);
-        return ResponseEntity.ok(registeredUser);
+        return ResponseEntity.ok(UserDTO.UserResponse.fromUser(registeredUser));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
-        User authenticatedUser = authenticationService.authenticate(loginUserDto);
-        if (authenticatedUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    public ResponseEntity<?> authenticate(@RequestBody LoginUserDto loginUserDto) {
+        try {
+            User authenticatedUser = authenticationService.authenticate(loginUserDto);
+            jwtToken = jwtService.generateToken(
+                    authenticatedUser.getUsername(),
+                    authenticatedUser.getRole().name()
+            );
+            return ResponseEntity.ok(new LoginResponse(jwtToken));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
-        // ✅ مرّر الـ role
-        jwtToken = jwtService.generateToken(
-                authenticatedUser.getUsername(),
-                authenticatedUser.getRole().name()
-        );
-        return ResponseEntity.ok(new LoginResponse(jwtToken));
     }
 
     @PostMapping("/verify")

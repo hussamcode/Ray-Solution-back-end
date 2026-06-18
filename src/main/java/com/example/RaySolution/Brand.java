@@ -6,5 +6,8 @@ public enum Brand {
     Apple,
     Huawei,
     HP,
+    Dell,
+    Razer,
+    Sony,
  
 }

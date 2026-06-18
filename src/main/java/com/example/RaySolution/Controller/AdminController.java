@@ -18,10 +18,12 @@ public class AdminController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // ✅ جيب كل المستخدمين
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userRepository.findAll());
+    public ResponseEntity<List<UserDTO.UserResponse>> getAllUsers() {
+        List<UserDTO.UserResponse> users = userRepository.findAll().stream()
+                .map(UserDTO.UserResponse::fromUser)
+                .toList();
+        return ResponseEntity.ok(users);
     }
 
     // ✅ أنشئ Admin جديد

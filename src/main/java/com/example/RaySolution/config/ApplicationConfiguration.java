@@ -68,18 +68,18 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    CommandLineRunner createmanger(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    CommandLineRunner createManager(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            if (userRepository.findByUsername("manger").isEmpty()) {
-                User manger = User.builder()
-                        .username("manger")
-                        .email("manger@manger.com")
-                        .password(passwordEncoder.encode("manger123"))
+            if (userRepository.findByUsername("manager").isEmpty()) {
+                User manager = User.builder()
+                        .username("manager")
+                        .email("manager@manager.com")
+                        .password(passwordEncoder.encode("manager123"))
                         .role(Role.MANAGER)
                         .enabled(true)
                         .build();
-                userRepository.save(manger);
-                System.out.println("manger created ✅");
+                userRepository.save(manager);
+                System.out.println("Manager created ✅");
             }
         };
     }

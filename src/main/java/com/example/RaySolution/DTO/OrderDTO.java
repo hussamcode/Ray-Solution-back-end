@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class OrderDTO {
     @Getter
@@ -16,13 +17,16 @@ public class OrderDTO {
         private Long id;
         private Long userId;
         private String code;
-        private String[] producerCode;
+        private List<String> producerCode;
         private LocalDateTime acceptableAT;
         private LocalDateTime deliveryAt;
         private OrderStatus status;
         public String phonenumber;
         public String name;
         public String establishmentname;
+        public Double latitude;
+        public Double longitude;
+        public String address;
 
     }
 
@@ -71,14 +75,17 @@ public class OrderDTO {
     public static class StatusUpdateMessage {
         public Long id;
         public String code;
-        public String[] producerCode;
+        public List<String> producerCode;
         public LocalDateTime acceptableAT;
-        public LocalDateTime deliveryAt; // ✅ أضف هذا
+        public LocalDateTime deliveryAt;
         public OrderStatus status;
         public String name;
         public String phonenumber;
         public String establishmentname;
-        public String message; // "ok" / "deleted" / "test"
+        public String message;
+        public Double latitude;
+        public Double longitude;
+        public String address;
     }
 
     @Getter
@@ -91,5 +98,19 @@ public class OrderDTO {
         public String name;
         public String establishmentname;
         public OrderStatus status;
+        public Double latitude;
+        public Double longitude;
+        public String address;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UpdateLocationRequest {
+        private Double latitude;
+        private Double longitude;
+        private String address;
     }
 }

@@ -74,11 +74,18 @@ public class OrderController {
         return ResponseEntity.ok(orderService.updateOrderStatusAdmin(request, code));
     }
 
-    @PutMapping("/{code}/confirmrequset")
+    @PutMapping("/{code}/confirmrequest")
     public ResponseEntity<OrderDTO.OrderResponse> updateOrderInformation(
             @PathVariable String code,
             @Valid @RequestBody OrderDTO.UpdateInformationRequest request) {
         return ResponseEntity.ok(orderService.updateInformationStatus(request, code));
+    }
+
+    @PutMapping("/{code}/location")
+    public ResponseEntity<OrderDTO.OrderResponse> updateOrderLocation(
+            @PathVariable String code,
+            @Valid @RequestBody OrderDTO.UpdateLocationRequest request) {
+        return ResponseEntity.ok(orderService.updateOrderLocation(request, code));
     }
 
     @DeleteMapping("/{code}")

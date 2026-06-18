@@ -46,38 +46,22 @@ public class AuthenticationService {
     }
 
     public User authenticate(LoginUserDto input) {
-        System.out.println("userDto: " + input.getUsername());
-        System.out.println("passwordDto: " + input.getPassword());
         User user = userRepository.findByUsername(input.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        System.out.println("userr: " + user.getUsername());
-        System.out.println("possworuser: " + user.getPassword());
 
         if (!user.isEnabled()) {
-            System.out.println("throwing exception");
             throw new RuntimeException("Account not verified. Please verify your account.");
         }
         try {
-            System.out.println("input user: " + input.getUsername());
-            System.out.println("input pass: " + input.getPassword());
-            Authentication authentication = authenticationManager.authenticate(
+            authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             input.getUsername(),
                             input.getPassword()
                     )
             );
-
-            System.out.println("authentication: " + authentication);
-            if (authentication.isAuthenticated()) {
-                System.out.println("authentication ok");
-            }
-
-
             return user;
         } catch (Exception e) {
-            System.out.println("exception: " + e);
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("Invalid username or password");
         }
     }
 

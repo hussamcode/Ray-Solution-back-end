@@ -39,6 +39,15 @@ public class Producer {
     @Column(nullable = false)
     private Integer producerAdd;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean active = true;
+
+    private Double latitude;
+
+    private Double longitude;
+
+    private String address;
 
     @PrePersist
     protected void onCreate() {

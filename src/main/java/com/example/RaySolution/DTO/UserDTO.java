@@ -1,5 +1,6 @@
 package com.example.RaySolution.DTO;
 
+import com.example.RaySolution.model.User;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -33,9 +34,16 @@ public class UserDTO {
         public Long id;
         public String username;
         public String email;
-        public String password;
         public String role;
 
+        public static UserResponse fromUser(User user) {
+            return UserResponse.builder()
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .role(user.getRole().name())
+                    .build();
+        }
     }
 
 }

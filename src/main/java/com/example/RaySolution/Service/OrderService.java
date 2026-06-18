@@ -5,6 +5,7 @@ import com.example.RaySolution.DTO.OrderDTO;
 import com.example.RaySolution.DTO.ProducerDTO;
 import com.example.RaySolution.OrderStatus;
 import com.example.RaySolution.Repository.OrderRepository;
+import com.example.RaySolution.Repository.ProducerRepository;
 import com.example.RaySolution.Repository.UserRepository;
 import com.example.RaySolution.model.MyProducer;
 import com.example.RaySolution.model.Order;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.Console;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final ProducerRepository producerRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
 
@@ -38,7 +41,7 @@ public class OrderService {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
     }
 
-    private boolean isManger() {
+    private boolean isManager() {
         return SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getAuthorities()
@@ -54,10 +57,21 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    private Producer findActiveProduct(String code) {
+        Producer producer = producerRepository.findBycode(code)
+                .orElseThrow(() -> new RuntimeException("Product not found with code: " + code));
+        if (!producer.isActive()) {
+            throw new RuntimeException("Product is no longer available: " + code);
+        }
+        return producer;
+    }
+
     public OrderDTO.OrderResponse createOrder(OrderDTO.CreateOrderRequest request) {
         User currentUser = getCurrentUser();
+        findActiveProduct(request.producerCode);
+
         Order order = Order.builder()
-                .producerCode(new String[]{request.producerCode})
+                .producerCode(new ArrayList<>(List.of(request.producerCode)))
                 .user(currentUser)
                 .build();
 
@@ -73,11 +87,10 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         if (request.producerCode != null) {
-            String[] existing = order.getProducerCode();
-            String[] updated = new String[existing.length + 1];
-            System.arraycopy(existing, 0, updated, 0, existing.length);
-            updated[existing.length] = request.producerCode;
-            order.setProducerCode(updated);
+            findActiveProduct(request.producerCode);
+            List<String> existing = order.getProducerCode();
+            existing.add(request.producerCode);
+            order.setProducerCode(existing);
         }
 
         order = orderRepository.save(order);
@@ -91,9 +104,13 @@ public class OrderService {
         order = orderRepository.findBycodeAndUser(code, currentUser)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
+        boolean wasProcessing = order.getStatus() == OrderStatus.PROCESSING;
         order.setStatus(request.getStatus());
         if (request.status == OrderStatus.PENDING_APPROVAL) {
             order.setAcceptableAT(LocalDateTime.now());
+        }
+        if (!wasProcessing && request.getStatus() == OrderStatus.PROCESSING) {
+            deductStock(order);
         }
         order = orderRepository.save(order);
         notifyOrderStatus(order, "ok");
@@ -102,7 +119,7 @@ public class OrderService {
 
     public OrderDTO.OrderResponse updateOrderStatusAdmin(OrderDTO.UpdateStateRequest request, String code) {
         Order order;
-        if (isAdmin() || isManger()) {
+        if (isAdmin() || isManager()) {
             order = orderRepository.findBycode(code)
                     .orElseThrow(() -> new RuntimeException("Order not found"));
         } else {
@@ -111,15 +128,19 @@ public class OrderService {
                     .orElseThrow(() -> new RuntimeException("Order not found"));
         }
 
+        boolean wasProcessing = order.getStatus() == OrderStatus.PROCESSING;
         order.setStatus(request.getStatus());
         if (request.getStatus() == OrderStatus.PENDING_APPROVAL) {
             order.setAcceptableAT(LocalDateTime.now());
         }
-        System.out.println(request.getStatus() == OrderStatus.PROCESSED);
-
+        if (!wasProcessing && request.getStatus() == OrderStatus.PROCESSING) {
+            deductStock(order);
+        }
         if (request.getStatus() == OrderStatus.PROCESSED) {
-            System.out.println(request.getDeliveryAt());
             order.setDeliveryAt(request.getDeliveryAt());
+        }
+        if (request.getStatus() == OrderStatus.DELIVERED) {
+            order.setDeliveryAt(LocalDateTime.now());
         }
         order = orderRepository.save(order);
         notifyOrderStatus(order, "ok");
@@ -132,17 +153,56 @@ public class OrderService {
         Order order = orderRepository.findBycodeAndUser(code, currentUser)
                 .orElseThrow(() -> new RuntimeException("order not found with id: " + code));
 
+        boolean wasProcessing = order.getStatus() == OrderStatus.PROCESSING;
         order.setName(request.getName());
         order.setPhonenumber(request.getPhonenumber());
         order.setEstablishmentname(request.getEstablishmentname());
         order.setStatus(request.getStatus());
+        if (request.getLatitude() != null) {
+            order.setLatitude(request.getLatitude());
+        }
+        if (request.getLongitude() != null) {
+            order.setLongitude(request.getLongitude());
+        }
+        if (request.getAddress() != null) {
+            order.setAddress(request.getAddress());
+        }
         if (request.status == OrderStatus.PENDING_APPROVAL) {
             order.setAcceptableAT(LocalDateTime.now());
+        }
+        if (!wasProcessing && request.getStatus() == OrderStatus.PROCESSING) {
+            deductStock(order);
         }
         order = orderRepository.save(order);
 
         notifyOrderStatus(order, "ok");
 
+        return mapToResponse(order);
+    }
+
+
+    public OrderDTO.OrderResponse updateOrderLocation(OrderDTO.UpdateLocationRequest request, String code) {
+        Order order;
+        if (isAdmin() || isManager()) {
+            order = orderRepository.findBycode(code)
+                    .orElseThrow(() -> new RuntimeException("Order not found"));
+        } else {
+            User currentUser = getCurrentUser();
+            order = orderRepository.findBycodeAndUser(code, currentUser)
+                    .orElseThrow(() -> new RuntimeException("Order not found"));
+
+            if (order.getStatus() != OrderStatus.PENDING_APPROVAL
+                    && order.getStatus() != OrderStatus.PROCESSING) {
+                throw new RuntimeException("Location can only be changed during Pending Approval or Processing");
+            }
+        }
+
+        order.setLatitude(request.getLatitude());
+        order.setLongitude(request.getLongitude());
+        order.setAddress(request.getAddress());
+        order = orderRepository.save(order);
+
+        notifyOrderStatus(order, "ok");
         return mapToResponse(order);
     }
 
@@ -156,7 +216,7 @@ public class OrderService {
     }
 
     public List<OrderDTO.OrderResponse> getAllOrderAdmin() {
-        if (isAdmin() || isManger()) {
+        if (isAdmin() || isManager()) {
             return orderRepository.findAll()
                     .stream()
                     .map(this::mapToResponse)
@@ -186,7 +246,7 @@ public class OrderService {
     }
 
     public OrderDTO.OrderResponse getOrderByCodeAdmin(String code) {
-        if (isAdmin() || isManger()) {
+        if (isAdmin() || isManager()) {
             return mapToResponse(
                     orderRepository.findBycode(code)
                             .orElseThrow(() -> new RuntimeException("Order not found"))
@@ -202,7 +262,7 @@ public class OrderService {
 
     public void deleteOrder(String code) {
         Order order;
-        if (isAdmin() || isManger()) {
+        if (isAdmin() || isManager()) {
             order = orderRepository.findBycode(code)
                     .orElseThrow(() -> new RuntimeException("Order not found"));
         } else {
@@ -215,6 +275,18 @@ public class OrderService {
     }
 
 
+    private void deductStock(Order order) {
+        for (String code : order.getProducerCode()) {
+            Producer product = producerRepository.findBycode(code)
+                    .orElseThrow(() -> new RuntimeException("Product not found: " + code));
+            if (product.getStowage() < 1) {
+                throw new RuntimeException("Insufficient stock for product: " + code);
+            }
+            product.setStowage(product.getStowage() - 1);
+            producerRepository.save(product);
+        }
+    }
+
     public void notifyOrderStatus(Order order, String message) {
 
         var update = OrderDTO.StatusUpdateMessage.builder()
@@ -226,6 +298,9 @@ public class OrderService {
                 .establishmentname(order.getEstablishmentname())
                 .deliveryAt(order.getDeliveryAt())
                 .phonenumber(order.getPhonenumber())
+                .latitude(order.getLatitude())
+                .longitude(order.getLongitude())
+                .address(order.getAddress())
                 .message(message)
                 .build();
 
@@ -248,6 +323,9 @@ public class OrderService {
                 .phonenumber(order.getPhonenumber())
                 .establishmentname(order.getEstablishmentname())
                 .name(order.getName())
+                .latitude(order.getLatitude())
+                .longitude(order.getLongitude())
+                .address(order.getAddress())
                 .build();
     }
 }

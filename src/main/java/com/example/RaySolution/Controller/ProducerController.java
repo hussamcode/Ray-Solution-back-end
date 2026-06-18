@@ -40,6 +40,18 @@ public class ProducerController {
         return ResponseEntity.status(HttpStatus.OK).body(producer);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllProducersIncludeInactive() {
+        var producer = producerService.getAllShipmentsIncludeInactive();
+        return ResponseEntity.status(HttpStatus.OK).body(producer);
+    }
+
+    @GetMapping("/locations")
+    public ResponseEntity<?> getAllLocations() {
+        var locations = producerService.getAllLocations();
+        return ResponseEntity.status(HttpStatus.OK).body(locations);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getProducerByID(@PathVariable Long id) {
         ProducerDTO.ProducerResponse producer = producerService.getProducerByID(id);
@@ -62,6 +74,12 @@ public class ProducerController {
     public ResponseEntity<?> updateProducerAdd(@PathVariable Long id, @Valid @RequestBody ProducerDTO.UpdateProducerRequestAdd request) {
         ProducerDTO.ProducerResponse producer = producerService.updateProducerAdd(request, id);
         return ResponseEntity.status(HttpStatus.OK).body(producer);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProducer(@PathVariable Long id) {
+        producerService.deleteProducer(id);
+        return ResponseEntity.noContent().build();
     }
 
 //    @GetMapping("/csrf-token")

@@ -24,6 +24,11 @@ public class ProducerDTO {
         //        @NotBlank(message = "Image is required")
         public byte[] image;
         public Integer stowage;
+        public Brand brand;
+        public Boolean active;
+        public Double latitude;
+        public Double longitude;
+        public String address;
 
     }
 
@@ -63,6 +68,10 @@ public class ProducerDTO {
         public Integer stowage;
         public Brand brand;
         public Integer producerAdd;
+        public boolean active;
+        public Double latitude;
+        public Double longitude;
+        public String address;
     }
 
     @Getter
@@ -78,6 +87,10 @@ public class ProducerDTO {
         public byte[] image;
         public Integer stowage;
         public Brand brand;
+        public Boolean active;
+        public Double latitude;
+        public Double longitude;
+        public String address;
 
     }
 
@@ -103,6 +116,7 @@ public class ProducerDTO {
         public Integer stowage;
         public Brand brand;
         public Integer producerAdd;
+        public boolean active;
         private String message;
     }
 
@@ -114,6 +128,19 @@ public class ProducerDTO {
         public Integer stowage;
         public Integer producerAdd;
         private String message;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProducerLocationResponse {
+        public Long id;
+        public String code;
+        public String name;
+        public String address;
+        public Double latitude;
+        public Double longitude;
     }
 
 

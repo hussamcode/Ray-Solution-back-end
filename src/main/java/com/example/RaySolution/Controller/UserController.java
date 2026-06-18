@@ -1,5 +1,6 @@
 package com.example.RaySolution.Controller;
 
+import com.example.RaySolution.DTO.UserDTO;
 import com.example.RaySolution.Service.UserService;
 import com.example.RaySolution.model.User;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,10 @@ public class UserController {
 
 
     @GetMapping("/")
-    public ResponseEntity<List<User>> allUsers() {
-        List<User> users = userService.allUsers();
+    public ResponseEntity<List<UserDTO.UserResponse>> allUsers() {
+        List<UserDTO.UserResponse> users = userService.allUsers().stream()
+                .map(UserDTO.UserResponse::fromUser)
+                .toList();
         return ResponseEntity.ok(users);
     }
 }

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -23,8 +25,8 @@ public class Order {
     private User user;
     @Column(unique = true)
     private String code;
-    @Column
-    private String[] producerCode;
+    @ElementCollection
+    private List<String> producerCode = new ArrayList<>();
     @Column
     private LocalDateTime acceptableAT;
     @Column
@@ -39,6 +41,12 @@ public class Order {
     private String name;
     @Column
     private String establishmentname;
+
+    private Double latitude;
+
+    private Double longitude;
+
+    private String address;
 
     @PrePersist
     protected void onCreate() {
